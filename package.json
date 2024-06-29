@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon --env-file=.env app.js"
   },
   "author": "Albert Ezoula",
   "license": "ISC",
