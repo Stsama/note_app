@@ -76,6 +76,12 @@ h1,h2,h3,h4,h5,h6 {
             url('../img/noise-bg.png') left top repeat,
             var(--background-color)
         ;
+    }
+}
+
+@media (max-width: 1199px) {
+    .image{
+        display: none;
     }    
 }
 
