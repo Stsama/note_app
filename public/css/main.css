@@ -88,14 +88,14 @@ h1,h2,h3,h4,h5,h6 {
 .home-title::before {
     content: url('../img/stars.svg');
     position: absolute;
-    left: -50px;
+    left: -30px;
     top: -30px;
 }
 
 .home-title::after {
     content: url('../img/stars.svg');
     position: absolute;
-    right: -50px;
+    right: -5px;
     bottom: -30px;
     font-size: small;
 }
