@@ -24,8 +24,8 @@ exports.dashboard = async (req, res) => {
       { $sort: { updatedAt: -1 } },
       {
         $project: {
-          title: { $substr: ["$title", 0, 30] },
-          body: { $substr: ["$body", 0, 100] },
+          title: { $substr: ["$title", 0, 15] },
+          body: { $substr: ["$body", 0, 90] },
         },
       },
     ])
@@ -79,9 +79,9 @@ exports.dashboardViewNote = async (req, res) => {
  */
 exports.dashboardUpdateNote = async (req, res) => {
   try{
-    await Note.findByIdAndUpdate(
+    await Note.findOneAndUpdate(
       {_id: req.params.id}, 
-      {title: req.body.title, body: req.body.body})
+      {title: req.body.title, body: req.body.body, updatedAt: Date.now()})
       .where({user: req.user.id}
     );
     res.redirect('/dashboard');
@@ -95,5 +95,74 @@ exports.dashboardUpdateNote = async (req, res) => {
  * DELETE
  */
 exports.dashboardDeleteNote = async (req, res) => {
-
+  try {
+    await Note.deleteOne({_id: req.params.id})
+    .where({user: req.user.id});
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+
+/**
+ * Add Note
+ * GET
+ */
+exports.dashboardAddNote = async (req, res) => {
+  res.render('dashboard/add', {
+    layout: "../views/layouts/dashboard"
+  });
+}
+
+/**
+ * Add Note
+ * POST
+ */
+exports.dashboardAddNoteSubmit = async (req, res) => {
+  try {
+    req.body.user = req.user.id;
+    await Note.create(req.body);
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+/**
+ * Search Note
+ * GET
+ */
+
+exports.dashboardSearch = async (req, res) => {
+  res.render('dashboard/search', {
+    searchResults: "",
+    layout: "../views/layouts/dashboard"
+  });
+}
+
+/**
+ * Search Note
+ * POST
+ */
+exports.dashboardSearchSubmit = async (req, res) => {
+  let searchTerm = req.body.searchTerm;
+  const searchNoSpecialChars = searchTerm.replace(/[^a-zA-Z0-9]/g, '');
+  try {
+    const searchResults = await Note.find({
+      $or: [
+        { title: { $regex: new RegExp(searchNoSpecialChars, 'i') }},
+        { body: { $regex: new RegExp(searchNoSpecialChars, 'i') } }
+      ]
+    }).where({user: req.user.id});
+  
+    res.render('dashboard/search', {
+      searchResults,
+      layout: "../views/layouts/dashboard"
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+}
