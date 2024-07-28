@@ -6,6 +6,8 @@ const dashboardController = require('../controllers/dashboardController');
  * App Routes
  */
 router.get('/dashboard', isLoggedIn, dashboardController.dashboard);
+router.get('/dashboard/item/:id', isLoggedIn, dashboardController.dashboardViewNote);
+router.put('/dashboard/item/:id', isLoggedIn, dashboardController.dashboardUpdateNote);
 
 
 
